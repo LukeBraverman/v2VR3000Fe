@@ -1,6 +1,6 @@
 "use client"
 import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -8,8 +8,9 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
-import React from "react";
+import React, {useState} from "react";
 import {RichTextEditor} from "@/app/components/RichTextEditor";
+import {NoteOptions, VodNote} from "@/app/model/note.model";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -25,6 +26,10 @@ export default function Home() {
 
     const [open, setOpen] = React.useState(false);
 
+    const [notes, setNotes] = React.useState<VodNote[]>([]);
+
+    const [rteCurrentText, setRteCurrentText] = useState<string | null>('');
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -32,11 +37,37 @@ export default function Home() {
         setOpen(false);
     };
 
+    const handleSave = () => {
+
+        if (rteCurrentText == null)
+        {
+            setRteCurrentText('');
+            setOpen(false);
+        }
+        const newVodNote:VodNote = {
+            description: rteCurrentText! ,
+            healthOfOpponent: 100,
+            healthOfPlayer: 100,
+            isNoteForOpponent: false,
+            noteId: "ServerSide",
+            noteOption: NoteOptions.ANTI_AIR_FAILED,
+            vodId: "VodID"
+        }
+
+        setNotes((prevNotes) => [...prevNotes, newVodNote]);
+        setRteCurrentText('');
+        setOpen(false);
+    };
+
+    const test = () => {
+        console.log('test', notes)
+    }
+
     return (
         <div className="flex h-[100%]">
             {/* Video Holder - 80% */}
             <div id="videoholder" className="flex-[4] bg-gray-200 flex justify-center items-center h-[100%]">
-                <video className="w-[70%] h-[70%] object-cover" controls>
+                <video className="w-[100%] h-[70%] object-cover" controls>
                     <source src="/tokido.mp4" type="video/mp4"/>
                     Your browser does not support the video tag.
                 </video>
@@ -51,6 +82,7 @@ export default function Home() {
                 </div>
                 <div id="notes" className="w-full h-full border-4 border-indigo-500 ">
                     <div>
+                        <button onClick={test}>Test</button>
                     </div>
                 </div>
 
@@ -79,11 +111,11 @@ export default function Home() {
                 </IconButton>
                 <DialogContent dividers>
                     <div>
-                        <RichTextEditor />
+                        <RichTextEditor currentText={rteCurrentText} setRteText={setRteCurrentText} />
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
+                    <Button autoFocus onClick={handleSave}>
                         Save changes
                     </Button>
                 </DialogActions>

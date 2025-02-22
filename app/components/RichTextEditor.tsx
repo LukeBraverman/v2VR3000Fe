@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import { Editor } from "primereact/editor";
 
-export const RichTextEditor = () => {
-    const [text, setText] = useState('');
+interface RichTextEditorProps {
+    setRteText: (text: string | null) => void; // Function prop accepting a string
+    currentText: string | null;
+}
+
+
+export const RichTextEditor = ({currentText,setRteText}: RichTextEditorProps) => {
+
 
     return (
         <div className="card">
 
-            <Editor value={text} onTextChange={(e) => setText(e.htmlValue)} style={{ height: '320px' }} />
+            <Editor value={currentText ? currentText : ''} onTextChange={(e) => setRteText(e.htmlValue)} style={{ height: '320px' }} />
+
         </div>
     )
 };
